@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="//unpkg.com/alpinejs" defer></script>
+  </head>
+  <body x-data="app()">
+    <h1>Gestion de Produits</h1>
+
+    <form @submit.prevent="addCategory">
+      <h2>Ajouter une categorie</h2>
+
+      <input x-model="newCategory.name" type="text" placeholder="nom" />
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <div class="categories">
+      <template x-for="category in categories" :key="category._id">
+        <div class="category">
+          <p>
+            <span x-text="category._id"></span>
+            <span x-text="category.name"></span>
+          </p>
+        </div>
+      </template>
+    </div>
+
+    <form @submit.prevent="addProduct">
+      <h2>Ajouter un produit</h2>
+
+      <input x-model="newProduct.name" type="text" placeholder="nom" /> <br />
+      <input x-model="newProduct.price" type="number" placeholder="price" />
+      <br />
+      <input x-model="newProduct.stock" type="number" placeholder="stock" />
+      <br />
+      <input
+        x-model="newProduct.category"
+        type="text"
+        placeholder="category id"
+      />
+      <br />
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <div class="products">
+      <h2>Produits</h2>
+      <template x-for="product in products" :key="product._id">
+        <div class="product">
+          <p>
+            <span x-text="product.name"></span>
+            <span x-text="product.price"></span> € stock:
+            <span x-text="product.stock"></span> Cat:
+            <span x-text="product.category.name"></span>
+          </p>
+        </div>
+      </template>
+    </div>
+
+    <script>
+      function app() {
+        const API = "http://localhost:3000";
+        return {
+          categories: [],
+          newCategory: {
+            name: "",
+          },
+
+          products: [],
+          newProduct: {
+            name: "",
+            price: null,
+            stock: null,
+            category: "",
+          },
+
+          async addCategory() {
+            await fetch(API + "/api/categories", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.newCategory),
+            });
+
+            this.loadData();
+          },
+
+          async addProduct() {
+            await fetch(API + "/api/products", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(this.newProduct),
+            });
+
+            this.loadData();
+          },
+
+          async loadData() {
+            const c = await fetch(API + "/api/categories");
+            this.categories = c.json();
+            const p = await fetch(API + "/api/products");
+            this.products = p.json();
+          },
+
+          init() {
+            this.loadData();
+          },
+        };
+      }
+    </script>
+  </body>
+</html>
