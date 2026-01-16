@@ -40,14 +40,8 @@ const reviewSchema = new mongoose.Schema({
 const Review = mongoose.model("review", reviewSchema);
 
 app.get("/api/categories", async (req, res) => {
-  try {
-    const category = await new Category(req.body).save();
-    res.status(201).json(category);
-  } catch (err) {
-    res
-      .status(401)
-      .json({ message: "Erreur dans l'ajout de la categorie", error: err });
-  }
+  const categories = await Category.find();
+  res.json(categories);
 });
 
 app.post("/api/categories", async (req, res) => {
