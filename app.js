@@ -34,8 +34,8 @@ const User = mongoose.model("user", userSchema);
 const reviewSchema = new mongoose.Schema({
   comment: { type: String, required: true },
   rating: { type: Number, required: true },
-  email: { type: Number, unique: true },
-  role: { type: Number, default: "client" },
+  product: { type: mongoose.Schema.Types.ObjectId, ref: "product" },
+  author: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
 });
 const Review = mongoose.model("review", reviewSchema);
 
