@@ -61,4 +61,26 @@ app.post("/api/categories", async (req, res) => {
   }
 });
 
+app.get("/api/products", async (req, res) => {
+  const products = await Product.find().populate("category");
+  res.json(products);
+});
+
+app.post("/api/products", async (req, res) => {
+  if (req.body.price <= 0) {
+    res.status(400).json({ error: "Erreur: Le prix doit être positif" });
+    return;
+  }
+
+  try {
+    const product = new Product(req.body);
+    await product.save();
+    res.status(201).json(product);
+  } catch (err) {
+    res
+      .status(400)
+      .json({ message: "Erreur dans l'ajout du produit", error: err });
+  }
+});
+
 app.listen(3000, () => console.log("Serveur Garage sur port 3000"));
